@@ -1,0 +1,31 @@
+    def addstudent(request):
+if request.session.has_key('is_logged'):
+       return render(request,'addstudent.html')
+    return redirect ('login')
+ 
+def viewstudents(request):
+    if request.session.has_key('is_logged'):
+        Student=AddStudent.objects.all()
+        return render(request,'viewstudents.html',{'Student':Student})
+    return redirect('stafflogin')
+ 
+def Searchstudent(request):
+    if request.session.has_key('is_logged'):
+        query3=request.GET["query3"]
+        Student=AddStudent.objects.filter(studentid__icontains=query3)
+        params={'Student':Student}
+        return render(request,'viewstudents.html',params)
+    return redirect("stafflogin") 
+ 
+def addstudentsubmission(request):
+    if request.session.has_key('is_logged'):
+        if request.method == "POST":
+            user_id = request.session["user_id"]
+            user1 = User.objects.get(id=user_id)
+            sname = request.POST["sname"]
+            studentid = request.POST["studentid"]
+            add = AddStudent(user = user1,sname=sname,studentid=studentid)
+            add.save()
+            Student = AddStudent.objects.all()
+            return render(request,'addstudent.html',{'Student':Student})
+    return redirect('/')
